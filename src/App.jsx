@@ -1,14 +1,18 @@
 import React from "react";
-import Header from "./components/Header";
-import Spinner from "./components/layout/Spinner";
-import HomeView from "./components/HomeView/HomeView";
-import PlayerView from "./components/PlayerView";
-import styled from "styled-components";
-import AppState from "./context/app/AppState";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import AlertState from "./context/alert/AlertState";
+import AppState from "./context/app/AppState";
+import styled from "styled-components";
+import Header from "./components/Header/Header";
 import Alert from "./components/layout/Alert";
+import HomeView from "./components/pages/HomeView";
+import PlayerView from "./components/pages/PlayerView";
+import FavoritesView from "./components/pages/FavoritesView";
+import FavoritesPlayer from "./components/pages/FavoritesPlayer";
+import PrivateRoute from "./components/pages/PrivateRoute";
+import NotFound from "./components/pages/NotFound";
 
-const Content = styled.div`
+const StyledContainer = styled.div`
   background-color: ${(props) => props.theme.background};
   min-height: 100vh;
   padding: 0 30px;
@@ -22,15 +26,29 @@ const App = () => {
   return (
     <AlertState>
       <AppState>
-        <div className="App">
-          <Header />
-          <Alert />
-          <Content>
-            <Spinner />
-            <HomeView />
-            <PlayerView />
-          </Content>
-        </div>
+        <Router>
+          <div id="App">
+            <Header />
+            <Alert />
+            <StyledContainer>
+              <Switch>
+                <PrivateRoute
+                  exact
+                  path="/favorites/player"
+                  component={FavoritesPlayer}
+                />
+                <PrivateRoute
+                  exact
+                  path="/favorites"
+                  component={FavoritesView}
+                />
+                <Route exact path="/player" component={PlayerView} />
+                <Route exact path="/" component={HomeView} />
+                <Route component={NotFound} />
+              </Switch>
+            </StyledContainer>
+          </div>
+        </Router>
       </AppState>
     </AlertState>
   );

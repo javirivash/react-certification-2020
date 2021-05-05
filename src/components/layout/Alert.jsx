@@ -6,47 +6,46 @@ const StyledAlert = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky;
+  position: fixed;
   z-index: 1;
-  top: 64px;
-  background-color: rgb(24, 24, 24, 0.99);
-  border-top: solid 1px #101010;
-  width: 100%;
-  padding: 8px 10px;
+  bottom: 0;
+  background-color: ${(props) => props.theme.alert};
+  border-radius: 5px;
+  margin: 10px 2%;
+  width: 96%;
+  padding: 18px;
+  box-shadow: ${(props) => props.theme.shadow};
+  opacity: ${(props) => (props.alert ? "1" : "0")};
+  transition: opacity 0.3s ease-out;
 
   * {
     font-size: 14px;
-    color: #c0c0c0;
+    color: ${(props) => props.theme.primaryText};
   }
 `;
 
-const StyledIcon = styled.span`
+const StyledIcon = styled.i`
   margin-right: 10px;
 `;
 const StyledMessage = styled.h1`
   font-family: "Roboto", sans-serif;
   margin-right: auto;
 `;
-const StyledButton = styled.span`
+const StyledButton = styled.i`
   cursor: pointer;
 `;
 
 const Alert = () => {
   const { alert, removeAlert } = useAlertContext();
-  const onClick = () => {
-    removeAlert();
-  };
 
   return (
-    alert !== null && (
-      <StyledAlert>
-        <StyledIcon className="material-icons">error</StyledIcon>
-        <StyledMessage>{alert}</StyledMessage>
-        <StyledButton onClick={onClick} className="material-icons">
-          close
-        </StyledButton>
-      </StyledAlert>
-    )
+    <StyledAlert alert={!!alert}>
+      <StyledIcon className="material-icons">error</StyledIcon>
+      <StyledMessage>{alert}</StyledMessage>
+      <StyledButton onClick={() => removeAlert()} className="material-icons">
+        close
+      </StyledButton>
+    </StyledAlert>
   );
 };
 

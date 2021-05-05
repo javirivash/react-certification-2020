@@ -1,16 +1,54 @@
-import { render, screen } from "@testing-library/react";
 import React from "react";
-import VideoItem from ".";
-import snippet from "./snippet-mock.json";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import AppContext from "../../context/app/appContext";
+import { currentUser, selectedVideo } from "../../utils/testMocks";
+import VideoItem from "./VideoItem";
+jest.mock("react-router-dom", () => ({
+  useHistory: () => [],
+  useLocation: () => ({ pathname: "/" }),
+}));
 
 describe("VideoItem", () => {
-  test("thumbnail is in the document", () => {
-    render(<VideoItem snippet={snippet} />);
-    expect(screen.getByRole("img")).toBeInTheDocument();
+  const getRelatedVideos = jest.fn();
+  const renderComponent = (contextValue = {}) => {
+    render(
+      <AppContext.Provider
+        value={{
+          currentUser,
+          getRelatedVideos,
+          ...contextValue,
+        }}
+      >
+        <VideoItem video={selectedVideo} />
+      </AppContext.Provider>
+    );
+  };
+
+  beforeAll(() => {
+    window.scrollTo = jest.fn();
+  });
+  afterAll(() => {
+    window.scrollTo.mockClear();
   });
 
-  test("video details are in the document", () => {
-    render(<VideoItem snippet={snippet} />);
-    expect(screen.getByRole("article")).toBeInTheDocument();
+  it("renders video details ", () => {
+    renderComponent();
+    expect(screen.getByRole("videoItemDetails")).toBeInTheDocument();
+  });
+
+  it("renders thumbnail", () => {
+    renderComponent();
+    expect(screen.getByRole("img")).toBeInTheDocument();
+    expect(screen.getByRole("img")).toHaveAttribute(
+      "src",
+      selectedVideo.thumbnail
+    );
+  });
+
+  it("calls getRelatedVideos when clicking the item", () => {
+    renderComponent();
+    userEvent.click(screen.getByRole("videoItem"));
+    expect(getRelatedVideos).toHaveBeenCalledWith(selectedVideo, "/");
   });
 });

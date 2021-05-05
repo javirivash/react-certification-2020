@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { useAppContext } from "../../../context/app/appContext";
 import { useAlertContext } from "../../../context/alert/alertContext";
@@ -30,17 +31,25 @@ const Form = styled.form`
     width: 15%;
     cursor: pointer;
     opacity: 0.7;
-  }
-
-  #submit:hover {
-    opacity: 1;
+    :hover {
+      opacity: 1;
+    }
+    :focus {
+      opacity: 1;
+    }
   }
 `;
 
 const Search = () => {
   const [text, setText] = useState("");
-  const { getResultVideos } = useAppContext();
+  const { getResultVideos, initApis } = useAppContext();
   const { setAlert } = useAlertContext();
+  const { pathname } = useLocation();
+  const history = useHistory();
+
+  useEffect(() => {
+    initApis();
+  }, []);
 
   const onChange = (e) => {
     setText(e.target.value);
@@ -54,6 +63,9 @@ const Search = () => {
     if (text !== "") {
       getResultVideos(text);
       document.getElementById("text").select();
+      if (pathname !== "/") {
+        history.push("/");
+      }
     } else {
       setAlert("Enter a search text");
     }

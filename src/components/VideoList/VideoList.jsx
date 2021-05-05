@@ -1,5 +1,7 @@
 import React, { Fragment } from "react";
-import VideoItem from "../VideoItem";
+import VideoItem from "../VideoItem/VideoItem";
+import Spinner from "../layout/Spinner";
+import { useAppContext } from "../../context/app/appContext";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 
@@ -9,7 +11,6 @@ export const StyledTitle = styled.h1`
   color: ${(props) => props.theme.primaryText};
   margin-bottom: 24px;
 `;
-
 const ItemsContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -24,7 +25,11 @@ const ItemsContainer = styled.div`
 `;
 
 const VideoList = ({ listTitle, videos }) => {
-  return (
+  const { loading } = useAppContext();
+
+  return loading ? (
+    <Spinner />
+  ) : (
     <Fragment>
       <StyledTitle>{listTitle}</StyledTitle>
       <ItemsContainer role="videoList">
@@ -37,7 +42,7 @@ const VideoList = ({ listTitle, videos }) => {
 };
 
 VideoList.propTypes = {
-  listTitle: PropTypes.string.isRequired,
+  listTitle: PropTypes.object.isRequired,
   videos: PropTypes.array.isRequired,
 };
 

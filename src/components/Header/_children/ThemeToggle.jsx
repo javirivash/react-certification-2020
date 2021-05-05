@@ -10,10 +10,10 @@ const StyledButton = styled.button`
   padding: 5px;
   cursor: pointer;
   opacity: 0.7;
-
   :hover {
-    color: #c0c0c0;
-    background-color: transparent;
+    opacity: 1;
+  }
+  :focus {
     opacity: 1;
   }
 `;

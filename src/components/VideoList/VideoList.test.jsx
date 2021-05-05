@@ -1,14 +1,51 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { render, screen } from "@testing-library/react";
-import VideoList from ".";
-import data from "../mock/youtube-videos-mock.json";
+import AppContext from "../../context/app/appContext";
+import { currentUser, resultVideos } from "../../utils/testMocks";
+import VideoList from "./VideoList";
+jest.mock("react-router-dom", () => ({
+  useHistory: () => [],
+  useLocation: () => ({ pathname: "/" }),
+}));
 
 describe("VideoList", () => {
-  test("array with at least one video item is in the document", () => {
-    render(<VideoList data={data} />);
-    const isArrayOfVideoItems = Array.isArray(screen.queryAllByRole("article"));
-    const isNotEmpty = screen.queryAllByRole("article").length > 0;
-    expect(isArrayOfVideoItems).toBe(true);
-    expect(isNotEmpty).toBe(true);
+  const title = <Fragment>This is the list title</Fragment>;
+  const loading = false;
+  const renderComponent = (contextValue = {}) => {
+    render(
+      <AppContext.Provider
+        value={{
+          currentUser,
+          loading,
+          ...contextValue,
+        }}
+      >
+        <VideoList listTitle={title} videos={resultVideos} />
+      </AppContext.Provider>
+    );
+  };
+
+  it("renders spinner when loading is true", () => {
+    renderComponent({ loading: true });
+    expect(
+      screen.getByRole("img", { name: /Loading.../i })
+    ).toBeInTheDocument();
+  });
+
+  it("renders the list title passed as prop", () => {
+    renderComponent();
+    expect(
+      screen.getByRole("heading", { name: /This is the list title/i })
+    ).toBeInTheDocument();
+  });
+
+  it("renders the videos container", () => {
+    renderComponent();
+    expect(screen.getByRole("videoList")).toBeInTheDocument();
+  });
+
+  it("renders the videos array provided as videoItem components", () => {
+    renderComponent();
+    expect(screen.getAllByRole("videoItem").length).toBe(resultVideos.length);
   });
 });

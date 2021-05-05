@@ -3,8 +3,11 @@ const validateItems = (items) => {
     return item.snippet && item.id?.videoId;
   });
 
-  const restoreQuotes = (text) => {
-    return text.replace(/&#34;/g, '"').replace(/&#39;/g, "'");
+  const restoreCharacters = (text) => {
+    return text
+      .replace(/&#34;|&quot;/g, '"')
+      .replace(/&#39;|&apos;/g, "'")
+      .replace(/&#38;|&amp;/g, "&");
   };
 
   const validatedItems = filteredItems.slice(0, 24).map((item) => {
@@ -19,10 +22,11 @@ const validateItems = (items) => {
 
     return {
       id: item.id.videoId,
-      title: restoreQuotes(title),
-      description: restoreQuotes(description),
-      channelTitle: restoreQuotes(channelTitle),
+      title: restoreCharacters(title),
+      description: restoreCharacters(description),
+      channelTitle: restoreCharacters(channelTitle),
       thumbnail: url,
+      isFavorite: null,
     };
   });
   return validatedItems;

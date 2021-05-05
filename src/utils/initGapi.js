@@ -4,10 +4,10 @@ const initGapi = async () => {
   let apiKey;
   let discovery = {};
 
-  if (process.env.REACT_APP_API_KEY) {
-    apiKey = process.env.REACT_APP_API_KEY;
+  if (process.env.REACT_APP_YOUTUBE_API_KEY) {
+    apiKey = process.env.REACT_APP_YOUTUBE_API_KEY;
   } else {
-    apiKey = process.env.API_KEY;
+    apiKey = process.env.YOUTUBE_API_KEY;
   }
 
   const handleClientInit = async (resolve) => {
